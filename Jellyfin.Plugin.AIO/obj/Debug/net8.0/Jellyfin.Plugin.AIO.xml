@@ -1,0 +1,1374 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Jellyfin.Plugin.AIO</name>
+    </assembly>
+    <members>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.CommentController">
+            <summary>
+            Comments API for JellyTube video pages.
+            Posting runs through the content filter automatically — no separate filter call needed.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.CommentController.GetComments(System.Guid)">
+            <summary>
+            Returns all visible comments for a video, newest first (pinned comment always first).
+            GET /JellyTube/Comments/{itemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.CommentController.PostComment(System.Guid,Jellyfin.Plugin.AIO.Models.PostCommentRequest)">
+            <summary>
+            Posts a new comment. Runs through moderation automatically.
+            POST /JellyTube/Comments/{itemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.CommentController.DeleteComment(System.Guid,System.Guid)">
+            <summary>
+            Deletes a comment. Authors can delete their own; admins can delete any.
+            DELETE /JellyTube/Comments/{itemId}/{commentId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.CommentController.PinComment(System.Guid,System.Guid)">
+            <summary>Pins a comment (admin only). Unpins any previously pinned comment.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.CommentController.LikeComment(System.Guid,System.Guid)">
+            <summary>Adds a like to a comment.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.HypeController">
+            <summary>
+            API controller for the JellyTube Hype (like) system.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.HypeController.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Controllers.HypeController})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.HypeController"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.HypeController.GetStatus(System.Guid)">
+            <summary>
+            Gets the hype count and the current user's hype state for an item.
+            GET /JellyTube/Hype/{itemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.HypeController.Toggle(System.Guid)">
+            <summary>
+            Toggles the hype state (hype/un-hype) for the requesting user on an item.
+            POST /JellyTube/Hype/{itemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.HypeController.GetBatch(System.Collections.Generic.List{System.Guid})">
+            <summary>
+            Returns hype counts for a batch of items.
+            POST /JellyTube/Hype/Batch
+            Body: array of item GUIDs
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.ImageController">
+            <summary>
+            Extended image upload/serve endpoints for creator accounts.
+            Supports high-res profile pictures, channel banners, and video thumbnails —
+            all with configurable size limits larger than Jellyfin's defaults.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ImageController.UploadBanner(System.Guid)">
+            <summary>
+            Upload a channel banner image (creator/admin only).
+            POST /JellyTube/Images/{userId}/Banner
+            Body: raw image bytes.  Content-Type must be image/*.
+            Header: X-JT-FileSize: {bytes} (optional — used for pre-flight size check).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ImageController.GetBanner(System.Guid)">
+            <summary>
+            Retrieve a user's channel banner.
+            GET /JellyTube/Images/{userId}/Banner
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ImageController.DeleteBanner(System.Guid)">
+            <summary>
+            Delete a user's channel banner (admin only).
+            DELETE /JellyTube/Images/{userId}/Banner
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ImageController.UploadProfilePicture(System.Guid)">
+            <summary>
+            Upload a high-resolution profile picture (creator/admin only).
+            POST /JellyTube/Images/{userId}/ProfilePicture
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ImageController.GetProfilePicture(System.Guid)">
+            <summary>
+            Retrieve a high-res profile picture served by JellyTube.
+            GET /JellyTube/Images/{userId}/ProfilePicture
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ImageController.UploadThumbnail(System.Guid)">
+            <summary>
+            Upload a high-resolution video thumbnail (creator/admin only).
+            POST /JellyTube/Images/Thumbnail/{itemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ImageController.GetThumbnail(System.Guid)">
+            <summary>
+            Retrieve a high-res video thumbnail.
+            GET /JellyTube/Images/Thumbnail/{itemId}
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.MediaRequestController">
+            <summary>
+            API controller for the JellySeerr-style media request system.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Controllers.MediaRequestController})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.MediaRequestController"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.GetRequests(System.Boolean)">
+            <summary>
+            Returns all media requests (admin sees all, users see own).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.SubmitRequest(Jellyfin.Plugin.AIO.Models.MediaRequest)">
+            <summary>
+            Submits a new media request.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.UpdateStatus(System.Guid,Jellyfin.Plugin.AIO.Models.RequestStatus,System.String)">
+            <summary>
+            Updates the status of a request. Admin only.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.DeleteRequest(System.Guid)">
+            <summary>
+            Deletes a request. Admin only.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.Search(System.String)">
+            <summary>
+            Searches TMDb for movies and TV shows.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.NowPlaying">
+            <summary>
+            Returns currently in-theaters (Released) movies.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.Upcoming">
+            <summary>
+            Returns upcoming (Coming Soon) movies.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.PopularMovies">
+            <summary>
+            Returns popular movies.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.PopularTv">
+            <summary>
+            Returns popular TV shows.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.ModerationController">
+            <summary>
+            API controller for the JellyTube moderation system.
+            Exposes the content filter, strike management, and account audit endpoints.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Controllers.ModerationController})">
+            <summary>Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.ModerationController"/>.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.Filter(Jellyfin.Plugin.AIO.Models.FilterRequest)">
+            <summary>
+            Runs a comment or message through the server-side spam and toxicity filter.
+            The web client should call this before submitting any user-generated text.
+            POST /JellyTube/Moderation/Filter
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.CanComment">
+            <summary>
+            Checks whether the authenticated user is allowed to post comments.
+            GET /JellyTube/Moderation/CanComment
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.GetAllRecords">
+            <summary>
+            Returns all tracked user moderation records.
+            GET /JellyTube/Moderation/Users
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.GetRecord(System.Guid)">
+            <summary>
+            Returns the moderation record for a specific user.
+            GET /JellyTube/Moderation/Users/{userId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.AddStrike(System.Guid,System.String,System.String)">
+            <summary>
+            Adds a strike to a user. Admin only.
+            POST /JellyTube/Moderation/Users/{userId}/Strike
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.RemoveStrike(System.Guid,System.String)">
+            <summary>
+            Removes a strike from a user. Admin only.
+            DELETE /JellyTube/Moderation/Users/{userId}/Strike
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.ClearReviewFlag(System.Guid)">
+            <summary>
+            Clears the public review flag on a user account. Admin only.
+            DELETE /JellyTube/Moderation/Users/{userId}/ReviewFlag
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ModerationController.UnlockLogin(System.Guid)">
+            <summary>
+            Unlocks the login ban on a user account without removing the strike. Admin only.
+            POST /JellyTube/Moderation/Users/{userId}/UnlockLogin
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.SettingsController">
+            <summary>
+            Returns public-safe JellyTube settings that the web client reads on startup
+            to configure its UI (e.g. whether to show subscriber counts).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.SettingsController.GetPublicSettings">
+            <summary>
+            Returns client-visible settings — no auth required.
+            GET /JellyTube/Settings
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.StatisticsController">
+            <summary>
+            API controller for the statistics and analytics dashboard.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.#ctor(MediaBrowser.Controller.Session.ISessionManager,MediaBrowser.Controller.Library.IUserManager,MediaBrowser.Model.Activity.IActivityManager,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.StatisticsController"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetOverview">
+            <summary>
+            Returns a high-level overview (active sessions, user count, total events).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetUserStats">
+            <summary>
+            Returns per-user watch statistics.
+            Admin access only.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetHeatmap">
+            <summary>
+            Returns a 7-element array (Sun–Sat) of play-event counts.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetLiveSessions">
+            <summary>
+            Returns all currently active playback sessions.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController">
+            <summary>
+            API controller for the JellyTube A/B thumbnail testing system.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController})">
+            <summary>Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController"/>.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController.GetVariants(System.Guid)">
+            <summary>
+            Returns all thumbnail variants and their CTR stats for a video.
+            GET /JellyTube/Thumbnails/{itemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController.GetNext(System.Guid)">
+            <summary>
+            Returns the next thumbnail variant to display to this viewer (round-robin).
+            The web client calls this when rendering a video card or watch page.
+            GET /JellyTube/Thumbnails/{itemId}/Next
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController.RecordClick(System.Guid,System.Guid)">
+            <summary>
+            Records a click-through event for a specific variant.
+            The web client calls this when a viewer clicks a video card.
+            POST /JellyTube/Thumbnails/{itemId}/Click/{variantId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController.AddVariant(System.Guid,Jellyfin.Plugin.AIO.Models.AddVariantRequest)">
+            <summary>
+            Adds a new thumbnail variant for a video. Creator/admin only.
+            POST /JellyTube/Thumbnails/{itemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController.RemoveVariant(System.Guid,System.Guid)">
+            <summary>
+            Removes a thumbnail variant. Creator/admin only.
+            DELETE /JellyTube/Thumbnails/{itemId}/{variantId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.ThumbnailAbController.DeclareWinner(System.Guid,System.Guid)">
+            <summary>
+            Manually declares a winning variant. Admin only.
+            POST /JellyTube/Thumbnails/{itemId}/Winner/{variantId}
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.TotpController">
+            <summary>
+            API for Google Authenticator TOTP two-factor authentication.
+            Setup and management require the user to be authenticated (DefaultAuthorization).
+            Verification is called right after Jellyfin login — also requires DefaultAuthorization.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.TotpController.Status">
+            <summary>
+            Returns whether TOTP is configured and/or enabled for the calling user.
+            GET /JellyTube/TOTP/Status
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.TotpController.Setup">
+            <summary>
+            Generates a new TOTP secret and returns the otpauth:// URI.
+            The client renders this as a QR code for the user to scan.
+            TOTP is NOT yet enabled — call /Enable after scanning.
+            POST /JellyTube/TOTP/Setup
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.TotpController.Enable(Jellyfin.Plugin.AIO.Models.TotpVerifyRequest)">
+            <summary>
+            Verifies a code from the authenticator app and enables TOTP for the account.
+            Must be called after /Setup — sends the first code to confirm the secret was saved correctly.
+            POST /JellyTube/TOTP/Enable
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.TotpController.Disable">
+            <summary>
+            Disables TOTP for the calling user's account.
+            POST /JellyTube/TOTP/Disable
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.TotpController.Verify(Jellyfin.Plugin.AIO.Models.TotpVerifyRequest)">
+            <summary>
+            Called by the JellyTube web client immediately after Jellyfin login
+            when the user has TOTP enabled.  Stamps the current session as verified
+            for 8 hours on success.
+            POST /JellyTube/TOTP/Verify
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.TotpController.SessionOk">
+            <summary>
+            Checks whether the current session has already passed TOTP verification.
+            Used by the frontend to decide whether to prompt for a code.
+            GET /JellyTube/TOTP/SessionOk
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.UploadController">
+            <summary>
+            API controller for chunked file uploads.
+            </summary>
+            <remarks>
+            Upload access requires either:
+              (a) Jellyfin admin role (RequiresElevation), or
+              (b) the user's ID appears in PluginConfiguration.CreatorUserIds.
+            </remarks>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Controllers.UploadController})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.UploadController"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.InitSession(Jellyfin.Plugin.AIO.Models.InitUploadRequest)">
+            <summary>
+            Initializes a new chunked upload session.
+            </summary>
+            <param name="request">File metadata.</param>
+            <returns>Session info including chunk size.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.UploadChunk(System.Guid,System.Int32)">
+            <summary>
+            Uploads a single chunk for an existing session.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+            <param name="chunkIndex">Zero-based chunk index.</param>
+            <returns>Updated session progress.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.CompleteSession(System.Guid)">
+            <summary>
+            Marks an upload session as complete.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+            <returns>Completion confirmation.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.CancelSession(System.Guid)">
+            <summary>
+            Cancels an upload session and removes the temporary file.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.GetStatus(System.Guid)">
+            <summary>
+            Gets the current status of an upload session.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.GetConfig">
+            <summary>
+            Returns the current plugin upload configuration.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.VideoMetaController">
+            <summary>
+            Stores and retrieves JellyTube video metadata (title, description, tags, category,
+            SwipeShow flag, visibility) that Jellyfin's library does not natively support.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VideoMetaController.GetAll(System.Nullable{System.Guid})">
+            <summary>
+            All public videos, newest first.  Pass ?creatorId=… to filter by uploader.
+            GET /JellyTube/VideoMeta
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VideoMetaController.GetSwipeShow">
+            <summary>
+            Videos with SwipeShow enabled (used by the SwipeShow page).
+            GET /JellyTube/VideoMeta/SwipeShow
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VideoMetaController.Get(System.String)">
+            <summary>
+            Metadata for a single video by JellyTube video ID.
+            GET /JellyTube/VideoMeta/{videoId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VideoMetaController.GetByItem(System.Guid)">
+            <summary>
+            Metadata by Jellyfin library item ID.
+            GET /JellyTube/VideoMeta/ByItem/{jellyfinItemId}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VideoMetaController.Save(Jellyfin.Plugin.AIO.Models.SaveVideoMetaRequest)">
+            <summary>
+            Saves metadata for an uploaded video. Called by the upload wizard after
+            POST /AIO/Upload/Complete completes successfully.
+            POST /JellyTube/VideoMeta
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VideoMetaController.Associate(System.String,Jellyfin.Plugin.AIO.Models.AssociateJellyfinItemRequest)">
+            <summary>
+            Associates a JellyTube video ID with a Jellyfin library item ID.
+            Called after triggering a library scan and getting the Jellyfin item ID.
+            POST /JellyTube/VideoMeta/{videoId}/Associate
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VideoMetaController.Delete(System.String)">
+            <summary>Deletes video metadata (admin only).</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.VpnBlockController">
+            <summary>
+            Admin API for managing the VPN / IP blacklist.
+            All endpoints require Jellyfin admin (RequiresElevation).
+            The middleware itself runs on every request automatically — no admin action is needed
+            unless you want to manually whitelist or blacklist a specific IP.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VpnBlockController.GetList">
+            <summary>
+            Returns the current blacklist and whitelist.
+            GET /JellyTube/VpnBlock/List
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VpnBlockController.Blacklist(System.String)">
+            <summary>
+            Manually blacklists an IP.
+            POST /JellyTube/VpnBlock/Blacklist/{ip}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VpnBlockController.Whitelist(System.String)">
+            <summary>
+            Whitelists an IP so it is never blocked (even if it matches a VPN range).
+            POST /JellyTube/VpnBlock/Whitelist/{ip}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VpnBlockController.Remove(System.String)">
+            <summary>
+            Removes an IP from both the blacklist and whitelist (resets to default VPN-check behaviour).
+            DELETE /JellyTube/VpnBlock/{ip}
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.VpnBlockController.Check(System.String)">
+            <summary>
+            Checks whether a specific IP would currently be blocked.
+            GET /JellyTube/VpnBlock/Check/{ip}
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.JellyTubeStartupFilter">
+            <summary>
+            Injects JellyTube middleware into the ASP.NET Core request pipeline.
+            Registered via <see cref="T:Jellyfin.Plugin.AIO.PluginServiceRegistrator"/> so Jellyfin picks it up automatically.
+            Order: VPN block runs first (drops connection before any auth), then registration rate limiter.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Middleware.RegistrationRateLimitMiddleware">
+            <summary>
+            ASP.NET Core middleware that enforces a registration rate limit.
+            Blocks more than N new account creations per IP within a rolling time window.
+            Default: 5 registrations per IP per 10 minutes.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Middleware.RegistrationRateLimitMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Middleware.RegistrationRateLimitMiddleware})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Middleware.RegistrationRateLimitMiddleware"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Middleware.RegistrationRateLimitMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Middleware invocation — intercepts POST /Users/New and enforces the rate limit.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Middleware.VpnBlockMiddleware">
+            <summary>
+            ASP.NET Core middleware that blocks requests from known VPN providers and
+            auto-blacklists their IPs.  Whitelisted IPs always pass through.
+            Controlled by <see cref="P:Jellyfin.Plugin.AIO.PluginConfiguration.EnableVpnBlock"/>.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.CommentStore">
+            <summary>Persisted comment store — keyed by Jellyfin item ID string.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.CommentDto">
+            <summary>Safe DTO returned to clients — never exposes AuthorId or internal flags.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.HypeStore">
+            <summary>
+            Persisted store of all hype (like) data across all items.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.HypeStore.ItemHypes">
+            <summary>
+            Maps itemId → set of userIds who have hyped it.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.HypeStatusResponse">
+            <summary>
+            Response returned for a single item's hype state for a specific user.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.HypeStatusResponse.ItemId">
+            <summary>Gets or sets the item ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.HypeStatusResponse.Count">
+            <summary>Gets or sets total hype count for this item.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.HypeStatusResponse.UserHyped">
+            <summary>Gets or sets whether the requesting user has hyped this item.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.ImageStore">
+            <summary>Persisted store of extended images (banners, large profile pics).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ImageStore.Banners">
+            <summary>UserId (string) → banner image record.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ImageRecord.FilePath">
+            <summary>Absolute server path to the stored image file.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.RequestStatus">
+            <summary>
+            Represents the status of a media request.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Pending">
+            <summary>Pending admin review.</summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Approved">
+            <summary>Approved and being sourced.</summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Available">
+            <summary>Media has been added to the library.</summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Denied">
+            <summary>Request was denied.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.MediaRequest">
+            <summary>
+            Represents a single user media request.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Id">
+            <summary>Gets or sets the unique request ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.RequestedByUserId">
+            <summary>Gets or sets the Jellyfin user ID who submitted the request.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.RequestedByUsername">
+            <summary>Gets or sets the display name of the user who submitted the request.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.TmdbId">
+            <summary>Gets or sets the TMDb ID (if available).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.ImdbId">
+            <summary>Gets or sets the IMDB ID (if available).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Title">
+            <summary>Gets or sets the title of the requested media.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Year">
+            <summary>Gets or sets the year of the media.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.MediaType">
+            <summary>Gets or sets the media type (movie, tv, etc.).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.PosterUrl">
+            <summary>Gets or sets the poster image URL.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Overview">
+            <summary>Gets or sets a short synopsis/overview.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Status">
+            <summary>Gets or sets the current request status.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.AdminNote">
+            <summary>Gets or sets the optional admin note.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.RequestedAt">
+            <summary>Gets or sets when the request was submitted.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.UpdatedAt">
+            <summary>Gets or sets when the status was last updated.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.UserNote">
+            <summary>Gets or sets optional user notes.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.ModerationStore">
+            <summary>
+            Persisted moderation store for all users.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ModerationStore.Records">
+            <summary>Maps userId → their strike record.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.UserStrikeRecord">
+            <summary>
+            Strike record for a single user.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UserStrikeRecord.UserId">
+            <summary>Gets or sets the Jellyfin user ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UserStrikeRecord.StrikeCount">
+            <summary>Gets or sets the number of active strikes (0–3).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UserStrikeRecord.CommentBannedUntil">
+            <summary>Gets or sets when the comment ban expires (null if not banned).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UserStrikeRecord.LoginBanned">
+            <summary>Gets or sets whether the user is locked out of login.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UserStrikeRecord.FlaggedForReview">
+            <summary>Gets or sets whether this account is publicly flagged for review.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UserStrikeRecord.PermanentlySuspended">
+            <summary>Gets or sets whether the account is permanently suspended.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UserStrikeRecord.History">
+            <summary>Gets or sets the audit trail of strike events.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.StrikeEvent">
+            <summary>
+            A single entry in the strike audit trail.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.StrikeEvent.Timestamp">
+            <summary>Gets or sets when the event occurred.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.StrikeEvent.Reason">
+            <summary>Gets or sets the reason for the strike.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.StrikeEvent.StrikeLevel">
+            <summary>Gets or sets the strike level after this event.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.StrikeEvent.AddedBy">
+            <summary>Gets or sets who issued the strike: "system" or "admin".</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.StrikeEvent.AdminNote">
+            <summary>Gets or sets an optional admin note.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.ContentFilterResult">
+            <summary>
+            Result of the server-side content filter.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ContentFilterResult.Blocked">
+            <summary>Gets or sets whether the content is blocked.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ContentFilterResult.Reason">
+            <summary>Gets or sets the reason: "spam", "toxic", or null.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ContentFilterResult.Message">
+            <summary>Gets or sets the message to show the user (if blocked and toxic).</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.FilterRequest">
+            <summary>
+            Request body for the comment filter endpoint.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.FilterRequest.Text">
+            <summary>Gets or sets the text to filter.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.ThumbnailAbStore">
+            <summary>
+            Persisted A/B thumbnail store for all items.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailAbStore.ItemVariants">
+            <summary>Maps itemId → list of thumbnail variants.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.ThumbnailVariant">
+            <summary>
+            A single thumbnail variant for A/B testing.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.VariantId">
+            <summary>Gets or sets the unique variant ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.Label">
+            <summary>Gets or sets the label (e.g. "Variant A", "Variant B").</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.ImagePath">
+            <summary>Gets or sets the server-side path to the thumbnail image.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.Impressions">
+            <summary>Gets or sets the number of times this variant was shown to viewers.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.Clicks">
+            <summary>Gets or sets the number of times viewers clicked through after seeing this variant.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.Ctr">
+            <summary>Gets the click-through rate as a percentage.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.CreatedAt">
+            <summary>Gets or sets when this variant was added.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.ThumbnailVariant.IsWinner">
+            <summary>Gets or sets whether this variant has been declared the winner.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.AddVariantRequest">
+            <summary>
+            Request body for adding a new thumbnail variant.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.AddVariantRequest.Label">
+            <summary>Gets or sets the display label.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.AddVariantRequest.ImagePath">
+            <summary>Gets or sets the absolute server path to the image file.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.TotpStore">
+            <summary>Persisted TOTP secrets store (keyed by Jellyfin user ID).</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.TotpRecord">
+            <summary>Per-user TOTP state.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.TotpRecord.Secret">
+            <summary>Base32-encoded TOTP secret.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.TotpSetupResponse">
+            <summary>Returned to the client after calling Setup so they can display the QR code.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.TotpSetupResponse.Secret">
+            <summary>Base32 secret — shown as text fallback if QR fails.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.TotpSetupResponse.OtpAuthUri">
+            <summary>otpauth:// URI for Google Authenticator / Authy / etc.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.TotpSetupResponse.Label">
+            <summary>Friendly account label shown in the authenticator app.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.TotpVerifyRequest.Code">
+            <summary>6-digit code from the authenticator app.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.UploadSession">
+            <summary>
+            Tracks the state of an in-progress chunked upload.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.SessionId">
+            <summary>Gets or sets the unique session ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.FileName">
+            <summary>Gets or sets the original file name.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.TotalSize">
+            <summary>Gets or sets the total file size in bytes.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.ChunkSize">
+            <summary>Gets or sets the chunk size in bytes used for this session.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.TotalChunks">
+            <summary>Gets or sets the total number of chunks expected.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.ReceivedChunks">
+            <summary>Gets or sets the set of chunk indexes that have been received.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.BytesWritten">
+            <summary>Gets or sets the bytes written so far.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.TempFilePath">
+            <summary>Gets or sets the temporary file path on the server.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.CreatedAt">
+            <summary>Gets or sets when this session was created.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.LastActivityAt">
+            <summary>Gets or sets when this session last received data.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.IsComplete">
+            <summary>Gets or sets whether the upload is complete.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.ProgressPercent">
+            <summary>Gets the completion percentage.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.InitUploadRequest">
+            <summary>
+            DTO for initiating a new upload session.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadRequest.FileName">
+            <summary>Gets or sets the file name.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadRequest.TotalSize">
+            <summary>Gets or sets the total file size in bytes.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.InitUploadResponse">
+            <summary>
+            Response DTO returned when a session is created.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadResponse.SessionId">
+            <summary>Gets or sets the session ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadResponse.ChunkSize">
+            <summary>Gets or sets the chunk size clients should use (bytes).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadResponse.TotalChunks">
+            <summary>Gets or sets the total number of chunks.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.VideoMetaStore">
+            <summary>
+            Persisted video metadata store.
+            Key = JellyTube video ID (generated at upload-init time = session ID string).
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.VideoMeta.VideoId">
+            <summary>JellyTube video ID — matches the upload session ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.VideoMeta.JellyfinItemId">
+            <summary>Set by admin after Jellyfin library scan associates the file with an item.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.VideoMeta.Visibility">
+            <summary>public | unlisted | private | scheduled</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.SaveVideoMetaRequest.SessionId">
+            <summary>The session ID returned by POST /AIO/Upload/Init.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.VpnBlockStore">
+            <summary>Persisted VPN / IP-blacklist store.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.VpnBlockStore.Entries">
+            <summary>IP (string) → blacklist entry. Also used for manual whitelist entries.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.VpnBlockEntry">
+            <summary>A single blacklist or whitelist IP entry.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.VpnBlockListResponse">
+            <summary>Response returned by the admin list endpoint.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Plugin">
+            <summary>
+            JellyTube all-in-one plugin.
+            Adds: chunked uploads, statistics, media requests, hype system,
+            A/B thumbnail testing, content moderation, and registration rate limiting.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Instance">
+            <summary>Gets the singleton instance of this plugin.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.UploadService">
+            <summary>Gets the chunked upload service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.MediaRequestService">
+            <summary>Gets the media-request service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.HypeService">
+            <summary>Gets the Hype (like) service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.ModerationService">
+            <summary>Gets the moderation / strike service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.ThumbnailAbService">
+            <summary>Gets the A/B thumbnail testing service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.VpnBlockService">
+            <summary>Gets the VPN / IP block service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.TotpService">
+            <summary>Gets the TOTP two-factor authentication service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.ImageService">
+            <summary>Gets the extended creator image service (banners, high-res thumbnails).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.CommentService">
+            <summary>Gets the comment service.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.VideoMetaService">
+            <summary>Gets the video metadata service (title, description, tags, SwipeShow flag, etc.).</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Plugin.#ctor(MediaBrowser.Common.Configuration.IApplicationPaths,MediaBrowser.Model.Serialization.IXmlSerializer,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Jellyfin.Plugin.AIO.Plugin"/> class.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Plugin.GetPages">
+            <inheritdoc />
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.PluginConfiguration">
+            <summary>
+            Plugin configuration for JellyTube (Jellyfin AIO).
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.MediaUploadPath">
+            <summary>Absolute path on the server where uploaded files are saved.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.MaxUploadSizeMb">
+            <summary>Maximum allowed upload size in megabytes.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.ChunkSizeMb">
+            <summary>Chunk size for chunked uploads in megabytes.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.TmdbApiKey">
+            <summary>TMDb API key for media discovery (legacy — JellyTube doesn't use TMDb by default).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.RequireRequestApproval">
+            <summary>Whether the request system requires admin approval.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.PublicStatistics">
+            <summary>Whether anonymous users can view the statistics dashboard.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.CreatorUserIds">
+            <summary>
+            Comma-separated list of Jellyfin user IDs that have creator (upload) access.
+            Leave empty to grant upload access to all admins only.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.EnableRegistrationRateLimit">
+            <summary>Enable registration rate limiting to prevent bot account creation.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.RegistrationRateLimitMax">
+            <summary>Maximum number of new account registrations per IP per window.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.RegistrationRateLimitWindowMinutes">
+            <summary>Time window in minutes for the registration rate limit.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.AutoStrikeOnSpam">
+            <summary>Automatically apply a strike when the spam filter detects spam in a comment.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.ExtraToxicKeywords">
+            <summary>Extra toxic keywords (comma-separated) loaded at runtime.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.EnableVpnBlock">
+            <summary>Block requests from known VPN providers and auto-blacklist their IPs.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.VpnWhitelistIps">
+            <summary>Comma-separated IPs that are always allowed through, even if they match a VPN range.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.VpnCustomCidrBlocks">
+            <summary>Additional CIDR blocks to treat as VPN (comma-separated, e.g. "1.2.3.0/24,5.6.7.0/22").</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.HideSubscriberCount">
+            <summary>When true, viewers cannot see the subscriber/user count.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.MaxProfileImageSizeMb">
+            <summary>Maximum profile picture upload size in MB for creator/admin accounts.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.MaxBannerImageSizeMb">
+            <summary>Maximum channel banner image size in MB for creator/admin accounts.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.MaxThumbnailSizeMb">
+            <summary>Maximum video thumbnail size in MB for creator/admin accounts.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.PluginServiceRegistrator">
+            <summary>
+            Registers JellyTube services into Jellyfin's DI container at startup.
+            The <see cref="T:Jellyfin.Plugin.AIO.JellyTubeStartupFilter"/> is picked up by ASP.NET Core's
+            IStartupFilter pipeline, which wires both middleware classes before any
+            request reaches a controller.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.CommentService">
+            <summary>
+            Stores and retrieves comments per Jellyfin item.
+            Every post runs through ModerationService — spam is auto-struck, toxicity is rejected.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.CommentService.GetComments(System.Guid)">
+            <summary>Returns visible (non-deleted) comments for an item, pinned first.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.CommentService.Post(System.Guid,System.Guid,System.String,System.String,System.String@)">
+            <summary>
+            Posts a new comment.  Returns null + sets <paramref name="rejectReason"/> if the content
+            is rejected by the toxicity filter; otherwise returns the saved comment.
+            Spam auto-strikes the author if configured.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.HypeService">
+            <summary>
+            Manages the JellyTube Hype (like) system.
+            Data is persisted to a JSON file in the Jellyfin data directory so it
+            survives server restarts.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.HypeService.#ctor(MediaBrowser.Common.Configuration.IApplicationPaths,Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.HypeService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.HypeService"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.HypeService.ToggleHype(System.Guid,System.Guid)">
+            <summary>
+            Toggles the hype state for a user on an item.
+            Returns the new hype state for that user.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.HypeService.GetStatus(System.Guid,System.Nullable{System.Guid})">
+            <summary>
+            Returns the hype count and user state for an item.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.HypeService.GetBatchCounts(System.Collections.Generic.IEnumerable{System.Guid})">
+            <summary>
+            Returns hype counts for a batch of items.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.ImageService">
+            <summary>
+            Stores and serves extended creator images: channel banners and high-quality
+            thumbnails.  Images are written to a subdirectory of the Jellyfin data path.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ImageService.SaveBanner(System.Guid,System.IO.Stream,System.String,System.Int64)">
+            <summary>
+            Saves a banner image for the given user, enforcing the configured max size.
+            Returns the response DTO, or throws <see cref="T:System.InvalidOperationException"/> if the size limit is exceeded.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ImageService.GetBanner(System.Guid)">
+            <summary>Returns (filePath, contentType) for a user's banner, or null if none.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ImageService.SaveProfilePicture(System.Guid,System.IO.Stream,System.String,System.Int64)">
+            <summary>
+            Saves a high-res profile picture. Returns the file path so the caller can
+            forward it to Jellyfin's own user-image API if desired.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.MediaRequestService">
+            <summary>
+            Manages media requests and TMDb/IMDb discovery.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.MediaRequestService"/> with a null logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.MediaRequestService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.MediaRequestService"/> with a provided logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetAll">
+            <summary>Returns all requests.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetByUser(System.Guid)">
+            <summary>Returns requests for a specific user.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.AddRequest(Jellyfin.Plugin.AIO.Models.MediaRequest)">
+            <summary>Adds a new request.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.UpdateStatus(System.Guid,Jellyfin.Plugin.AIO.Models.RequestStatus,System.String)">
+            <summary>Updates the status of a request (admin action).</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.DeleteRequest(System.Guid)">
+            <summary>Deletes a request.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.SearchAsync(System.String)">
+            <summary>Searches TMDb for movies and TV shows.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetNowPlayingAsync">
+            <summary>Gets currently in-theaters movies.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetUpcomingAsync">
+            <summary>Gets upcoming movies.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetPopularMoviesAsync">
+            <summary>Gets popular movies.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetPopularTvAsync">
+            <summary>Gets popular TV shows.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.ModerationService">
+            <summary>
+            Server-side moderation engine for JellyTube.
+            Handles the deterministic spam/toxicity filter and the three-strike system.
+            Strictly NON-AI — regex + keyword dictionary only.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Services.ModerationService.ToxicInterceptMessage">
+            <summary>
+            The exact intercept message shown to users who post toxic content.
+            Wording is fixed per spec.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Services.ModerationService.FlaggedAccountNotice">
+            <summary>
+            The exact public/internal notice shown on Strike-2 flagged accounts.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.#ctor(MediaBrowser.Common.Configuration.IApplicationPaths,Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.ModerationService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.ModerationService"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.Filter(System.String)">
+            <summary>
+            Runs the text through the spam and toxicity filters.
+            Returns a <see cref="T:Jellyfin.Plugin.AIO.Models.ContentFilterResult"/> indicating whether to block.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.GetRecord(System.Guid)">
+            <summary>
+            Returns the strike record for a user. Creates a clean record if none exists.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.GetAllRecords">
+            <summary>
+            Returns all tracked records for the admin dashboard.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.AddStrike(System.Guid,System.String,System.String,System.String)">
+            <summary>
+            Adds a strike to a user and applies the corresponding penalty.
+            Strike 1 → 7-day comment ban.
+            Strike 2 → Login ban + public review flag.
+            Strike 3 → Permanent suspension.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.RemoveStrike(System.Guid,System.String)">
+            <summary>
+            Removes one strike from a user and lifts the corresponding restrictions.
+            Requires an admin note.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.ClearReviewFlag(System.Guid)">
+            <summary>
+            Manually clears the review flag (admin action).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.UnlockLogin(System.Guid)">
+            <summary>
+            Manually unlocks a login ban (admin action, does not remove the strike itself).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.CanComment(System.Guid)">
+            <summary>
+            Returns true if the user is allowed to post comments.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ModerationService.CanLogin(System.Guid)">
+            <summary>
+            Returns true if the user is allowed to log in.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.StatisticsService">
+            <summary>
+            Aggregates watch and network statistics from Jellyfin.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.#ctor(MediaBrowser.Controller.Session.ISessionManager,MediaBrowser.Controller.Library.IUserManager,MediaBrowser.Model.Activity.IActivityManager,Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.StatisticsService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.StatisticsService"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetActiveSessions">
+            <summary>
+            Returns a list of currently active playback sessions.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetUserStatsAsync">
+            <summary>
+            Returns a summary of all users with their aggregate play-event count.
+            Fetches all user-attributed activity once, then groups in memory.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetWeekdayHeatmapAsync">
+            <summary>
+            Returns a per-weekday breakdown of play events (index 0 = Sunday).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetOverviewAsync">
+            <summary>
+            Returns a simple overview object with top-level counters.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.ThumbnailAbService">
+            <summary>
+            Manages A/B thumbnail testing for JellyTube.
+            Rotates variants round-robin to viewers and tracks impressions + clicks
+            to determine a winning thumbnail automatically.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ThumbnailAbService.#ctor(MediaBrowser.Common.Configuration.IApplicationPaths,Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.ThumbnailAbService})">
+            <summary>Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.ThumbnailAbService"/>.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ThumbnailAbService.GetVariants(System.Guid)">
+            <summary>
+            Returns all variants registered for an item.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ThumbnailAbService.AddVariant(System.Guid,System.String,System.String)">
+            <summary>
+            Adds a new thumbnail variant for an item. Maximum of 4 variants allowed.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ThumbnailAbService.RemoveVariant(System.Guid,System.Guid)">
+            <summary>
+            Removes a specific variant. Cannot remove the winner.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ThumbnailAbService.GetNextVariant(System.Guid)">
+            <summary>
+            Returns the next variant to show a viewer (round-robin rotation)
+            and increments its impression count.
+            If a winner has been declared, always returns the winner.
+            Returns null if no variants are configured.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ThumbnailAbService.RecordClick(System.Guid,System.Guid)">
+            <summary>
+            Records a click-through for a specific variant.
+            Automatically declares a winner when one variant reaches
+            statistical significance (≥100 impressions each and 20% higher CTR).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.ThumbnailAbService.DeclareWinner(System.Guid,System.Guid)">
+            <summary>
+            Manually declares a winner for a test. Admin action.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.TotpService">
+            <summary>
+            RFC 6238 TOTP (Google Authenticator compatible) — implemented in pure .NET,
+            no third-party packages required.  Secrets are stored per Jellyfin user ID.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.TotpService.BeginSetup(System.Guid,System.String)">
+            <summary>
+            Generates a new TOTP secret for the user (replaces any existing pending secret)
+            and returns the setup info (secret + otpauth URI) so the client can show a QR code.
+            Does NOT enable TOTP — the user must call <see cref="M:Jellyfin.Plugin.AIO.Services.TotpService.Enable(System.Guid,System.String)"/> after verifying.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.TotpService.Enable(System.Guid,System.String)">
+            <summary>Verifies a TOTP code and, if correct, marks TOTP as enabled for the user.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.TotpService.VerifySession(System.Guid,System.String,System.String)">
+            <summary>
+            Verifies a TOTP code for a user who is already authenticated via Jellyfin.
+            On success, stamps the session token as TOTP-verified for 8 hours.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.TotpService.IsSessionVerified(System.Guid,System.String)">
+            <summary>Returns true if TOTP is not required for the user, or if the session token is already verified.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.UploadService">
+            <summary>
+            Manages chunked file upload sessions.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.UploadService"/> with a null logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.UploadService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.UploadService"/> with a provided logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.CreateSession(System.String,System.Int64)">
+            <summary>
+            Creates a new upload session.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.WriteChunkAsync(System.Guid,System.Int32,System.IO.Stream)">
+            <summary>
+            Writes a chunk to the session's temp file.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.CompleteSession(System.Guid)">
+            <summary>
+            Marks a session as complete.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.CancelSession(System.Guid)">
+            <summary>
+            Cancels and cleans up a session.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.GetSession(System.Guid)">
+            <summary>
+            Retrieves a session by ID.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.VideoMetaService">
+            <summary>
+            Stores rich video metadata (title, description, tags, category, SwipeShow flag, visibility)
+            that Jellyfin's own library does not support.
+            Key = upload session ID (a GUID string) chosen at upload-init time.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.VideoMetaService.GetByJellyfinItem(System.Guid)">
+            <summary>Finds metadata by the associated Jellyfin item ID (set after library scan).</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.VideoMetaService.GetAll(System.Boolean)">
+            <summary>All public videos, newest first.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.VideoMetaService.GetSwipeShow">
+            <summary>Videos with SwipeShow enabled.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.VideoMetaService.GetByCreator(System.Guid)">
+            <summary>Videos uploaded by a specific creator.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.VpnBlockService">
+            <summary>
+            Checks incoming IP addresses against known VPN/datacenter CIDR ranges and a
+            persistent manual blacklist/whitelist.  Auto-blacklists IPs on first VPN hit.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.VpnBlockService.IsBlocked(System.String)">
+            <summary>
+            Returns true if <paramref name="ip"/> should be blocked.
+            Whitelisted IPs always pass.  Known-VPN IPs are auto-blacklisted on first hit.
+            </summary>
+        </member>
+    </members>
+</doc>

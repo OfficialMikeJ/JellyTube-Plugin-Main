@@ -1,0 +1,458 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Jellyfin.Plugin.AIO</name>
+    </assembly>
+    <members>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.MediaRequestController">
+            <summary>
+            API controller for the JellySeerr-style media request system.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Controllers.MediaRequestController})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.MediaRequestController"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.GetRequests(System.Boolean)">
+            <summary>
+            Returns all media requests (admin sees all, users see own).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.SubmitRequest(Jellyfin.Plugin.AIO.Models.MediaRequest)">
+            <summary>
+            Submits a new media request.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.UpdateStatus(System.Guid,Jellyfin.Plugin.AIO.Models.RequestStatus,System.String)">
+            <summary>
+            Updates the status of a request. Admin only.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.DeleteRequest(System.Guid)">
+            <summary>
+            Deletes a request. Admin only.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.Search(System.String)">
+            <summary>
+            Searches TMDb for movies and TV shows.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.NowPlaying">
+            <summary>
+            Returns currently in-theaters (Released) movies.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.Upcoming">
+            <summary>
+            Returns upcoming (Coming Soon) movies.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.PopularMovies">
+            <summary>
+            Returns popular movies.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.MediaRequestController.PopularTv">
+            <summary>
+            Returns popular TV shows.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.StatisticsController">
+            <summary>
+            API controller for the statistics and analytics dashboard.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.#ctor(MediaBrowser.Controller.Session.ISessionManager,MediaBrowser.Controller.Library.IUserManager,MediaBrowser.Model.Activity.IActivityManager,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.StatisticsController"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetOverview">
+            <summary>
+            Returns a high-level overview (active sessions, user count, total events).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetUserStats">
+            <summary>
+            Returns per-user watch statistics.
+            Admin access only.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetHeatmap">
+            <summary>
+            Returns a 7-element array (Sun–Sat) of play-event counts.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.StatisticsController.GetLiveSessions">
+            <summary>
+            Returns all currently active playback sessions.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Controllers.UploadController">
+            <summary>
+            API controller for chunked file uploads.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Controllers.UploadController})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Controllers.UploadController"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.InitSession(Jellyfin.Plugin.AIO.Models.InitUploadRequest)">
+            <summary>
+            Initializes a new chunked upload session.
+            </summary>
+            <param name="request">File metadata.</param>
+            <returns>Session info including chunk size.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.UploadChunk(System.Guid,System.Int32)">
+            <summary>
+            Uploads a single chunk for an existing session.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+            <param name="chunkIndex">Zero-based chunk index.</param>
+            <returns>Updated session progress.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.CompleteSession(System.Guid)">
+            <summary>
+            Marks an upload session as complete.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+            <returns>Completion confirmation.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.CancelSession(System.Guid)">
+            <summary>
+            Cancels an upload session and removes the temporary file.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.GetStatus(System.Guid)">
+            <summary>
+            Gets the current status of an upload session.
+            </summary>
+            <param name="sessionId">Upload session ID.</param>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Controllers.UploadController.GetConfig">
+            <summary>
+            Returns the current plugin upload configuration.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.RequestStatus">
+            <summary>
+            Represents the status of a media request.
+            </summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Pending">
+            <summary>Pending admin review.</summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Approved">
+            <summary>Approved and being sourced.</summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Available">
+            <summary>Media has been added to the library.</summary>
+        </member>
+        <member name="F:Jellyfin.Plugin.AIO.Models.RequestStatus.Denied">
+            <summary>Request was denied.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.MediaRequest">
+            <summary>
+            Represents a single user media request.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Id">
+            <summary>Gets or sets the unique request ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.RequestedByUserId">
+            <summary>Gets or sets the Jellyfin user ID who submitted the request.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.RequestedByUsername">
+            <summary>Gets or sets the display name of the user who submitted the request.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.TmdbId">
+            <summary>Gets or sets the TMDb ID (if available).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.ImdbId">
+            <summary>Gets or sets the IMDB ID (if available).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Title">
+            <summary>Gets or sets the title of the requested media.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Year">
+            <summary>Gets or sets the year of the media.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.MediaType">
+            <summary>Gets or sets the media type (movie, tv, etc.).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.PosterUrl">
+            <summary>Gets or sets the poster image URL.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Overview">
+            <summary>Gets or sets a short synopsis/overview.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.Status">
+            <summary>Gets or sets the current request status.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.AdminNote">
+            <summary>Gets or sets the optional admin note.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.RequestedAt">
+            <summary>Gets or sets when the request was submitted.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.UpdatedAt">
+            <summary>Gets or sets when the status was last updated.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.MediaRequest.UserNote">
+            <summary>Gets or sets optional user notes.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.UploadSession">
+            <summary>
+            Tracks the state of an in-progress chunked upload.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.SessionId">
+            <summary>Gets or sets the unique session ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.FileName">
+            <summary>Gets or sets the original file name.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.TotalSize">
+            <summary>Gets or sets the total file size in bytes.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.ChunkSize">
+            <summary>Gets or sets the chunk size in bytes used for this session.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.TotalChunks">
+            <summary>Gets or sets the total number of chunks expected.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.ReceivedChunks">
+            <summary>Gets or sets the set of chunk indexes that have been received.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.BytesWritten">
+            <summary>Gets or sets the bytes written so far.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.TempFilePath">
+            <summary>Gets or sets the temporary file path on the server.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.CreatedAt">
+            <summary>Gets or sets when this session was created.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.LastActivityAt">
+            <summary>Gets or sets when this session last received data.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.IsComplete">
+            <summary>Gets or sets whether the upload is complete.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.UploadSession.ProgressPercent">
+            <summary>Gets the completion percentage.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.InitUploadRequest">
+            <summary>
+            DTO for initiating a new upload session.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadRequest.FileName">
+            <summary>Gets or sets the file name.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadRequest.TotalSize">
+            <summary>Gets or sets the total file size in bytes.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Models.InitUploadResponse">
+            <summary>
+            Response DTO returned when a session is created.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadResponse.SessionId">
+            <summary>Gets or sets the session ID.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadResponse.ChunkSize">
+            <summary>Gets or sets the chunk size clients should use (bytes).</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Models.InitUploadResponse.TotalChunks">
+            <summary>Gets or sets the total number of chunks.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Plugin">
+            <summary>
+            The main Jellyfin AIO plugin class.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Instance">
+            <summary>Gets the singleton instance of this plugin.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.UploadService">
+            <summary>Gets the upload service singleton.</summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.Plugin.MediaRequestService">
+            <summary>Gets the media-request service singleton.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Plugin.#ctor(MediaBrowser.Common.Configuration.IApplicationPaths,MediaBrowser.Model.Serialization.IXmlSerializer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Jellyfin.Plugin.AIO.Plugin"/> class.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Plugin.GetPages">
+            <inheritdoc />
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.PluginConfiguration">
+            <summary>
+            Plugin configuration for Jellyfin AIO.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.MediaUploadPath">
+            <summary>
+            Gets or sets the absolute path on the server where uploaded files are saved.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.MaxUploadSizeMb">
+            <summary>
+            Gets or sets the maximum allowed upload size in megabytes.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.ChunkSizeMb">
+            <summary>
+            Gets or sets the chunk size for chunked uploads in megabytes.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.TmdbApiKey">
+            <summary>
+            Gets or sets the TMDb (The Movie Database) API key for media discovery.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.RequireRequestApproval">
+            <summary>
+            Gets or sets whether the request system requires approval before being fulfilled.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.AIO.PluginConfiguration.PublicStatistics">
+            <summary>
+            Gets or sets whether anonymous (unauthenticated) users can view the statistics dashboard.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.MediaRequestService">
+            <summary>
+            Manages media requests and TMDb/IMDb discovery.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.MediaRequestService"/> with a null logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.MediaRequestService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.MediaRequestService"/> with a provided logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetAll">
+            <summary>Returns all requests.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetByUser(System.Guid)">
+            <summary>Returns requests for a specific user.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.AddRequest(Jellyfin.Plugin.AIO.Models.MediaRequest)">
+            <summary>Adds a new request.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.UpdateStatus(System.Guid,Jellyfin.Plugin.AIO.Models.RequestStatus,System.String)">
+            <summary>Updates the status of a request (admin action).</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.DeleteRequest(System.Guid)">
+            <summary>Deletes a request.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.SearchAsync(System.String)">
+            <summary>Searches TMDb for movies and TV shows.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetNowPlayingAsync">
+            <summary>Gets currently in-theaters movies.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetUpcomingAsync">
+            <summary>Gets upcoming movies.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetPopularMoviesAsync">
+            <summary>Gets popular movies.</summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.MediaRequestService.GetPopularTvAsync">
+            <summary>Gets popular TV shows.</summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.StatisticsService">
+            <summary>
+            Aggregates watch and network statistics from Jellyfin.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.#ctor(MediaBrowser.Controller.Session.ISessionManager,MediaBrowser.Controller.Library.IUserManager,MediaBrowser.Model.Activity.IActivityManager,Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.StatisticsService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.StatisticsService"/>.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetActiveSessions">
+            <summary>
+            Returns a list of currently active playback sessions.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetUserStatsAsync">
+            <summary>
+            Returns a summary of all users with their aggregate play-event count.
+            Fetches all user-attributed activity once, then groups in memory.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetWeekdayHeatmapAsync">
+            <summary>
+            Returns a per-weekday breakdown of play events (index 0 = Sunday).
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.StatisticsService.GetOverviewAsync">
+            <summary>
+            Returns a simple overview object with top-level counters.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.AIO.Services.UploadService">
+            <summary>
+            Manages chunked file upload sessions.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.UploadService"/> with a null logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.AIO.Services.UploadService})">
+            <summary>
+            Initializes a new instance of <see cref="T:Jellyfin.Plugin.AIO.Services.UploadService"/> with a provided logger.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.CreateSession(System.String,System.Int64)">
+            <summary>
+            Creates a new upload session.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.WriteChunkAsync(System.Guid,System.Int32,System.IO.Stream)">
+            <summary>
+            Writes a chunk to the session's temp file.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.CompleteSession(System.Guid)">
+            <summary>
+            Marks a session as complete.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.CancelSession(System.Guid)">
+            <summary>
+            Cancels and cleans up a session.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.AIO.Services.UploadService.GetSession(System.Guid)">
+            <summary>
+            Retrieves a session by ID.
+            </summary>
+        </member>
+    </members>
+</doc>
