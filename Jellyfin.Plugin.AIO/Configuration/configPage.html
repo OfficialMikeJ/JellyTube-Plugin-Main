@@ -931,7 +931,10 @@ const fmt = {
 
 // ── Auth helpers ───────────────────────────────────────────────────────────
 function getAuthHeaders() {
-  const token = (window.ApiClient?.accessToken?.()) || localStorage.getItem('jellyfin_token') || '';
+  const token = window.parent?.ApiClient?.accessToken?.()
+    || window.ApiClient?.accessToken?.()
+    || localStorage.getItem('jellyfin_token')
+    || '';
   if (!token) return {};
   return { 'X-Emby-Token': token, 'Authorization': `MediaBrowser Token="${token}"` };
 }
@@ -1176,7 +1179,9 @@ function initRequestsTab() {
   reqInitialized = true;
 
   // Populate profile
-  const username = window.ApiClient?.getCurrentUser?.()?.Name || 'User';
+  const username = window.parent?.ApiClient?.getCurrentUser?.()?.Name
+    || window.ApiClient?.getCurrentUser?.()?.Name
+    || 'User';
   $('#profileUsername').textContent = username;
   $('#profileEmail').textContent = 'Jellyfin Account';
   $('#profileAvatarBtn').textContent = (username[0] || 'U').toUpperCase();
