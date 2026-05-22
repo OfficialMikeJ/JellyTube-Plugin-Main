@@ -82,4 +82,13 @@ public class PluginConfiguration : BasePluginConfiguration
 
     /// <summary>Maximum video thumbnail size in MB for creator/admin accounts.</summary>
     public int MaxThumbnailSizeMb { get; set; } = 20;
+
+    // ── JellyTube: Maintenance alert ──────────────────────────────────────────
+
+    /// <summary>When true, the maintenance alert popup is shown to all users on page load.</summary>
+    public bool MaintenanceEnabled { get; set; } = false;
+
+    /// <summary>Message displayed in the maintenance alert popup.</summary>
+    public string MaintenanceMessage { get; set; } =
+        "We are planning scheduled server maintenance on x date at x time. Thanks, The JellyTube Admin Team";
 }
