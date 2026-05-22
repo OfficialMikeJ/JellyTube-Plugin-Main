@@ -1,0 +1,21 @@
+[
+  {
+    "category": "General",
+    "description": "JellyTube AIO: Uploads, Hype, A/B Thumbnails, Moderation, and Stats.",
+    "guid": "d3a4f1b2-7c6e-4a90-b831-5e2f0c9d8a71",
+    "imageUrl": "",
+    "name": "JellyTube",
+    "overview": "All-in-one JellyTube plugin",
+    "owner": "OfficialMikeJ",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/OfficialMikeJ/JellyTube-Plugin-Main/releases/download/v1.0.0.0/JellyTubeAIO_1.0.0.0.zip",
+        "checksum": "4afb023598eb865311074a36d2dc7434",
+        "timestamp": "2026-05-22T00:00:00Z",
+        "changelog": "Initial release."
+      }
+    ]
+  }
+]

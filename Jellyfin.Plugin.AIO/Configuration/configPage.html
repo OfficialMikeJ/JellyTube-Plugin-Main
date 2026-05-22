@@ -1577,7 +1577,7 @@ async function loadConfig() {
 
   // Load full plugin config via Jellyfin API
   try {
-    const pluginConfig = await ApiClient.getPluginConfiguration('d3a4f1b2-7c6e-4a90-b831-5e2f0c9d8a71');
+    const pluginConfig = await apiFetch('/Plugins/d3a4f1b2-7c6e-4a90-b831-5e2f0c9d8a71/Configuration');
     if (pluginConfig) {
       $('#cfgUploadPath').value        = pluginConfig.MediaUploadPath || '';
       $('#cfgMaxSize').value           = pluginConfig.MaxUploadSizeMb || 10240;
@@ -1637,10 +1637,14 @@ $('#btnSaveConfig').addEventListener('click', async () => {
   };
 
   try {
-    await ApiClient.updatePluginConfiguration('d3a4f1b2-7c6e-4a90-b831-5e2f0c9d8a71', config);
+    await apiFetch('/Plugins/d3a4f1b2-7c6e-4a90-b831-5e2f0c9d8a71/Configuration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config)
+    });
     toast('Settings saved!', 'success');
   } catch {
-    toast('Could not save via Jellyfin API. Make sure you are logged in as admin.', 'error');
+    toast('Could not save settings. Make sure you are logged in as admin.', 'error');
   }
 });
 
